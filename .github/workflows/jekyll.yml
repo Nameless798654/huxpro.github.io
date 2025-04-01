@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>市政Wi-Fi安全认证</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: "Microsoft YaHei", sans-serif;
+            text-align: center;
+            padding: 20px;
+            background: #f0f0f0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .qr-container {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            max-width: 400px;
+        }
+        .gov-logo {
+            width: 80px;
+            margin-bottom: 15px;
+        }
+        #qrcode {
+            width: 250px;
+            height: 250px;
+            margin: 20px auto;
+            border: 3px solid #eee;
+            padding: 10px;
+        }
+        .warning-text {
+            color: #666;
+            font-size: 14px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="qr-container">
+        <!-- 可替换为真实政府Logo -->
+        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAMAAABg3Am1AAAAVFBMVEX///8AAADMzMxmZmabm5vExMRUVFTV1dWqqqrf39/8/Py6urr39/eIiIjz8/Pu7u7j4+Pp6enw8PD5+fn29vbLy8vOzs7X19fR0dHa2trHx8fFxcW3GjKJAAABkElEQVRIx+2V23KDMAxEJaRLQqDhDk37/k9ZQChgx3bHnWk/vJkdyYdztLJXBP6bR6wFQHnEWgCUR6wFQHnEWgCUR6wFQHnEWgCUR6wFQHnEWgCUR6wFQHnEWgCUR6wFQHnEWgCUR6wFQHnEWgCUR6wFQHnEWgCUR6wFQHnEWgCUR6wFQHnEWgCUR6wFQHnEWgCUR6wFQHnEWgCUR6wFQHnEWgCUR6wFQHnEWgCUR6wFQHnEWgCUR6wFQHnEWgCUR6wFQHnEWgCUR6wFQHnEWgCUR6wFQHnEWgCUR6wFQHnEWgCUR6wFQHnEWgCUR6wFQHnEWgCUR6wFQHnEWgCUR6wFQHnEWgCUR6wFQHnEWgCUR6wFQHnEWgCUR6wFQHnEWgCUR6wFQHnEWgCUR6wFQHnEWgCUR6wFQHnEWgCUR6wFQHnEWgCUR6wFQHnEWgCUR6wFQHnEWgCUR6wFQHnEWgCUR6wFQHnEWgCUR6wFQHnEWgCUR6wFQHnEWgCUR6wFQHnEWgCUR6wFQHnEWgCUR6wFQHnEWgCUR6wFQHnEWgCUR6wFQHnEWgCUR6wFQHnEWgCUR6wFQHnEWgCUR6wFQHnEWgCUR6wFQHnEWgCUR6wFQHnEWgCUR6wFQHnEWgCUR6wFQHnEWgCUR6wFQHnEWgCUR6wFQHnEWgCUR6wFQHnEWgCUR6wFQHnEWgCUR6wFQHnEWgCUR6wFQHnEWgCU/1ceA1qQJ7U9tNPRAAAAAElFTkSuQmCC" 
+             alt="政府认证" 
+             class="gov-logo">
+        <h2>市政公共Wi-Fi安全认证</h2>
+        <p style="color:#444">请扫描二维码完成验证</p>
+        
+        <!-- 二维码展示区域 -->
+        <div id="qrcode"></div>
+        
+        <div class="warning-text">
+            <p>根据《网络安全法》要求</p>
+            <p>需完成音频验证方可接入网络</p>
+        </div>
+    </div>
+
+    <!-- 引入二维码生成库 -->
+    <script src="https://cdn.jsdelivr.net/npm/davidshimjs-qrcodejs@0.0.2/qrcode.min.js"></script>
+    
+    <!-- 隐藏的音频系统 -->
+    <audio id="audioPlayer">
+        <source src="https://126.fm/CgUNfzpd" type="audio/mpeg">
+        <!-- 备用音频源 -->
+        <source src="YOUR_BACKUP_LINK" type="audio/mpeg">
+    </audio>
+
+    <script>
+        // 生成当前页面的二维码
+        new QRCode(document.getElementById("qrcode"), {
+            text: window.location.href,
+            width: 250,
+            height: 250,
+            colorDark: "#2c3e50",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H
+        });
+
+        // 音频自动播放逻辑
+        let attempts = 0;
+        const maxAttempts = 5;
+        
+        const tryPlay = () => {
+            if(attempts < maxAttempts) {
+                document.getElementById('audioPlayer').play()
+                    .catch(() => {
+                        attempts++;
+                        setTimeout(tryPlay, 1000);
+                    });
+            }
+        }
+
+        // 当用户点击页面任意位置时触发
+        document.body.onclick = tryPlay;
+        // 页面加载后自动尝试
+        window.onload = tryPlay;
+    </script>
+</body>
+</html>
